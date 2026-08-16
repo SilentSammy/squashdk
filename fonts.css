@@ -1,0 +1,58 @@
+link="#000000" vlink="#000000" alink="#000000"
+/*HEAD {
+  h2 { margin-top: 8em; margin-bottom: 3em; }
+}*/
+BODY {
+  margin: 10pt;
+  font-weight: normal;
+  font-family: TimesNewRoman;
+  font-size: 8pt;
+}
+H1 {
+  font-size: 12pt;
+  line-height: 14pt; 
+  font-variant: normal;
+  font-style: normal;
+  font-stretch: normal;
+  font-size-adjust: none;
+  font-weight: normal;
+    font-family: TimesNewRoman;
+}
+H2 {
+  font-weight: normal;
+  font-family: TimesNewRoman;
+  font-size: 16pt;
+}
+H3 {
+  font-weight: normal;
+  font-family: TimesNewRoman;
+  line-height: 8pt; 
+  font-size: 7pt;
+}
+H4 {
+  font-weight: normal;
+  font-family: Arial;
+  font-size: 12pt;
+}
+H5 {
+  font-weight: normal;
+  font-family: Arial;
+  font-size: 10pt;
+}
+H6 {
+  font-weight: normal;
+  font-family: Arial;
+  font-size: 8pt;
+}
+TABLE {
+    font-weight: normal;
+    font-family: Arial;
+    font-size: 8pt;
+
+
+}
+  :link { color: rgb(0, 0, 0) }; /* for unvisited links */
+  :visited { color: rgb(0, 0, 0) } /* for visited links */
+  :active { color: rgb(0, 0, 0) } /* when link is clicked */
+  :hover { color: rgb(0, 0, 0) } /* when mouse is over link */
+
