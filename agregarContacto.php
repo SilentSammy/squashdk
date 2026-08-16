@@ -5,8 +5,8 @@ $cotizacion = $_REQUEST["cotizacion"];
 
   include "incl/connect.incl";
 	$insertSQL="SELECT * FROM Empleados WHERE username='".$_SERVER['REMOTE_USER']."'";
-	$resultEmpleado = mysql_query($insertSQL);
-	$rowEmpleado = mysql_fetch_array($resultEmpleado);	
+	$resultEmpleado = mysqli_query($conn, $insertSQL);
+	$rowEmpleado = mysqli_fetch_array($resultEmpleado);	
 
    $rowEmpleo['nombre'];
 	 $puestoEmpleado=$rowEmpleo['puesto'];
@@ -51,8 +51,8 @@ if ($puestoEmpleado!='ayudante') {
 	 echo '<select name="responsable">';
    include "incl/connect.incl";
    $result = mysql_query("SELECT * FROM Empleados ORDER BY nombre");
-   mysql_close($conn);
-	 while ($row1 = mysql_fetch_array($result)) {
+   mysqli_close($conn);
+	 while ($row1 = mysqli_fetch_array($result)) {
 	    if ($row1['nombre']=='Manuel Ramirez A.')
 			   echo '<option value="'.$row1['nombre'].'" selected="selected">'.$row1['nombre'].'</option>';
 			else
@@ -92,3 +92,4 @@ else
 
 
 </body>
+

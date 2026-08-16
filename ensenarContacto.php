@@ -38,7 +38,7 @@ $delete_activity=$_REQUEST["delete_activity"];
 if ($delete_activity!='') {
 	 include "incl/connect.incl";
 	 $insertSQL = "DELETE FROM actividades WHERE id = ".$delete_activity;
-   mysql_query($insertSQL);
+   mysqli_query($conn, $insertSQL);
 }
 
 $buscar=$_REQUEST["buscar"];
@@ -68,7 +68,7 @@ if ($statusResponse !== false) {
 //update active
 	 include "incl/connect.incl";
    $insertSQL = "UPDATE `contactos` SET `activo` = now() WHERE `id` = ".$id;
-	 mysql_query($insertSQL);
+	 mysqli_query($conn, $insertSQL);
 
 
 
@@ -118,13 +118,13 @@ $agregar_nueva_actividad = $_REQUEST["agregar_nueva_actividad"];
 if ($tipo == 'Rent' and isset($agregar_nueva_actividad)) {
 
 	 $insertSQL = "select * from actividades where cancha = ".$cancha." and ((fecha >= '".$fecha."' and fecha < '".$fin_fecha."') or (final > '".$fecha."' and final <= '".$fin_fecha."') or (fecha > '".$fecha."' and final < '".$fin_fecha."')) order by fecha limit 1";
-   $result_activity_test = mysql_query($insertSQL);
-	 $ocupado=mysql_num_rows($result_activity_test);
+   $result_activity_test = mysqli_query($conn, $insertSQL);
+	 $ocupado=mysqli_num_rows($result_activity_test);
 	 if ($ocupado=="1") {
-	    $row_activity_test = mysql_fetch_array($result_activity_test);
+	    $row_activity_test = mysqli_fetch_array($result_activity_test);
 	 		$insertSQL = "select * from contactos where id=".$row_activity_test['contacto'];
-			$result_contacto = mysql_query($insertSQL);
-			$row_contacto = mysql_fetch_array($result_contacto);
+			$result_contacto = mysqli_query($conn, $insertSQL);
+			$row_contacto = mysqli_fetch_array($result_contacto);
 	    echo "<center><b>Problema: Cancha ".$cancha." ya esta ocupada en este horario!!!</b></center>";
 			echo "<br>";
 			echo "<center>Reservado por <span title=".$row_contacto['whatsapp']."><b>".$row_contacto['nombre']."</b></span> ".substr($row_activity_test["fecha"],0,16).'-'.substr($row_activity_test["final"],11,5)."</center>";
@@ -143,8 +143,8 @@ if (isset($agregar_nueva_actividad)) {
       $insertSQL = "INSERT INTO `actividades` ( `contacto` , `fecha` , `final` , `tipo` , `valor` , `duracion` , `cancha` , `descripcion` ) VALUES ($id, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '$tipo', $valor, '$duracion', '$cancha', '$descripcion')";	 
 	 elseif ($ocupado == '0'or $tipo=='Pago')
       $insertSQL = "INSERT INTO `actividades` ( `contacto` , `fecha` , `final` , `tipo` , `valor` , `duracion` , `cancha` , `descripcion` ) VALUES ($id, '$fecha', '$fin_fecha', '$tipo', $valor, '$duracion', '$cancha', '$descripcion')";
-	 mysql_query($insertSQL);
-   mysql_close($conn);
+	 mysqli_query($conn, $insertSQL);
+   mysqli_close($conn);
 }
 if (isset($editPago)) {
 	 if ($regimenFiscal=='')
@@ -152,8 +152,8 @@ if (isset($editPago)) {
 	 
 	 include "../incl/connect.incl";
    $insertSQL = "UPDATE `contactospersonas` SET `regimenCapital` = '".$regimenCapital."', `regimenFiscal` = '".$regimenFiscal."',`nombre` = '".$nombre."',`RFC` = '".$RFC."',`personaContacto` = '".$personaContacto."',`puesto` = '".$puesto."',`calle` = '".$calle."',`noExt` = '".$noExt."',`noInt` = '".$noInt."',`colonia` = '".$colonia."',`ciudad` = '".$ciudad."',`estado` = '".$estado."',`cp` = '".$cp."',`tlf1` = '".$tlf1."',`fax` = '".$fax."',`movil` = '".$movil."',`correoElectronico` = '".$correoElectronico."' WHERE `id` = ".$clienteContacto;
-	 mysql_query($insertSQL);
-   mysql_close($conn);
+	 mysqli_query($conn, $insertSQL);
+   mysqli_close($conn);
 }
   ?> 
 
@@ -188,8 +188,8 @@ else
 	 include "incl/connect.incl";
 
 		$insertSQL = "select * from Contactos where id = ".$id;
-    $result = mysql_query($insertSQL);
-    $row = mysql_fetch_array($result);
+    $result = mysqli_query($conn, $insertSQL);
+    $row = mysqli_fetch_array($result);
        $id=$row["id"];
 			 
        echo '<table border="0" cellpadding="0" cellspacing="20" summary="" align="center" bgcolor="#ffffff">';
@@ -257,8 +257,8 @@ else
 			 if ($changeResponsable!='') {
 			 		
 					$insertSQL = "select * from Empleos where (puesto='Camioneta' or puesto='CamionetaGerente') order by nombre";
-					$tableVendedor = mysql_query($insertSQL);
-					while ($rowVendedor = mysql_fetch_array($tableVendedor)) {
+					$tableVendedor = mysqli_query($conn, $insertSQL);
+					while ($rowVendedor = mysqli_fetch_array($tableVendedor)) {
 						if ($idVendedor==$rowVendedor['id'])
 							 echo "<option value=".$rowVendedor['id']." selected='selected'>".$rowVendedor['nombre']."</option>";
 						else	 
@@ -307,11 +307,11 @@ else
 		include "incl/connect.incl";
 
  		$insertSQL = "SELECT SUM(valor) FROM `actividades` WHERE tipo='pago' and contacto = ".$id;
-    $result = mysql_query($insertSQL);
-  	$row_pagos = mysql_fetch_array($result);
+    $result = mysqli_query($conn, $insertSQL);
+  	$row_pagos = mysqli_fetch_array($result);
  		$insertSQL = "SELECT SUM(valor) FROM `actividades` WHERE tipo!='pago' and contacto = ".$id;
-    $result = mysql_query($insertSQL);
-  	$row_rent = mysql_fetch_array($result);
+    $result = mysqli_query($conn, $insertSQL);
+  	$row_rent = mysqli_fetch_array($result);
     $saldo = $row_pagos['SUM(valor)']-$row_rent['SUM(valor)'];
 		echo '<center><h2>Saldo: $<b>'.$saldo.'</b></h2></center>';
 		
@@ -409,22 +409,22 @@ $currentDate = substr($currentDate,8,2).substr($currentDate,5,2).substr($current
 	  
 
   	include "incl/connect.incl";
-  	mysql_query($insertSQL);
+  	mysqli_query($conn, $insertSQL);
 
 		$insertSQL = "select * from actividades where contacto = ".$id." order by fecha desc";
-    $result = mysql_query($insertSQL);
+    $result = mysqli_query($conn, $insertSQL);
 	 
 	 echo "<b>Ahora: ".$now = (new \DateTime())->format( 'Y-m-d H:i:s' )."</b><br><br>";
 	 $now_time = strtotime($now);
 		$insertSQL = "select id from actividades where contacto = ".$id." and fecha > '".$now."' order by fecha limit 1";
-    $result_nextup = mysql_query($insertSQL);
-		$row_nextup = mysql_fetch_array($result_nextup);
+    $result_nextup = mysqli_query($conn, $insertSQL);
+		$row_nextup = mysqli_fetch_array($result_nextup);
 
 	 echo '<table  border="1" cellpadding="3" cellspacing="0" summary="" frame="border" >';
 	 echo '<thead><th>Fecha</th><th>Tipo</th><th>Duracion</th><th>Cancha</th><th>Debit</th><th>Credit</th><th>-</th></thead>';
 	 
    
-	  while ($row = mysql_fetch_array($result)) {
+	  while ($row = mysqli_fetch_array($result)) {
 
    echo '<tr><td>';
 	   if ($row["tipo"]=="Pago")
@@ -470,7 +470,7 @@ $currentDate = substr($currentDate,8,2).substr($currentDate,5,2).substr($current
    echo '</table><br><br>';
 
 
-	    mysql_close($conn);
+	    mysqli_close($conn);
 	
 		
 		
@@ -485,13 +485,13 @@ if ($tipo=='Proveedor') {
 		 if (isset($recibir)) {
 		 		if (isset($idHerramienta)) {
 				    $insertSQL = 'select * from cotizacionHerramientas where id='.$idHerramienta;
-				    $resultEnt=mysql_query($insertSQL);
-				 		$rowEnt = mysql_fetch_array($resultEnt);
+				    $resultEnt=mysqli_query($conn, $insertSQL);
+				 		$rowEnt = mysqli_fetch_array($resultEnt);
 						if ($rowEnt['recibidoFecha']=='0000-00-00')
 				       $insertSQL = "update Precio".$rowEnt[marca]." set enReserva=enReserva+".$rowEnt[cantidad]." where ref='".$rowEnt[modelo]."'";				 
 						else
 				       $insertSQL = "update Precio".$rowEnt[marca]." set enReserva=enReserva-".$rowEnt[cantidad]." where ref='".$rowEnt[modelo]."'";				 
-						mysql_query($insertSQL);
+						mysqli_query($conn, $insertSQL);
 
 						if ($rowEnt['recibidoFecha']=='0000-00-00') {
 						   $precio = $_REQUEST["precio"];
@@ -509,7 +509,7 @@ if ($tipo=='Proveedor') {
 							 else
 				 		      $insertSQL="UPDATE cotizacionHerramientas SET moneda_costo='', costo=0, recibidoFecha='0000-00-00', ref_recibir='' WHERE id=".$idHerramienta;
 		 				}
-						$result = mysql_query($insertSQL);
+						$result = mysqli_query($conn, $insertSQL);
 				} 
 	 	 }
 		 
@@ -519,29 +519,29 @@ if ($tipo=='Proveedor') {
 		 if (isset($quitar)) {
 		 		if (isset($idHerramienta)) {
 				 		$insertSQL="UPDATE cotizacionHerramientas SET Proveedor='None' WHERE id=".$idHerramienta;
-		 				$result = mysql_query($insertSQL);
+		 				$result = mysqli_query($conn, $insertSQL);
 			  }				
 	 	 }
 	   echo '<br><br><center><b>Herramientas sin pedido</b></center>';
 	 	 echo '<table  border="1" cellpadding="1" cellspacing="1" summary="" frame="border" >';
 	   echo '<tr><td><center><b>#</b></center></td><td><b>Marca</b></td><td><b>Modelo</b></td><td><b>Descripci�n</b></td><td><b>Cant.</b></td><td><b>Cliente</b></td><td><b>PrecioProv.</b></td><td><b>Fecha</b></td><td><b>Quitar</b></td></tr>';
 	   $insertSQL = "SELECT * FROM cotizacionHerramientas WHERE Proveedor='".strtoupper($nombreEmpresa)."' AND proveedorFecha='0000-00-00' ORDER BY modelo";
-		 $result = mysql_query($insertSQL);
+		 $result = mysqli_query($conn, $insertSQL);
 		 $i=1;
 		 $total=0;
-		 while ($row = mysql_fetch_array($result)) {
+		 while ($row = mysqli_fetch_array($result)) {
 		 			 		$insertSQL="SELECT * FROM marcadeherramientas where marca='".$row["marca"]."'";
-	 					  $resultPrecioBase = mysql_query($insertSQL);
-							$no_rows=mysql_num_rows($resultPrecioBase);
+	 					  $resultPrecioBase = mysqli_query($conn, $insertSQL);
+							$no_rows=mysqli_num_rows($resultPrecioBase);
 							if ($no_rows!=0) {
 		 			 			 $insertSQL="SELECT precioBase FROM precio".$row["marca"]." where ref='".$row["modelo"]."'";
-	 					  	 $resultPrecioBase = mysql_query($insertSQL);
-							   $rowPrecioBase = mysql_fetch_array($resultPrecioBase);
+	 					  	 $resultPrecioBase = mysqli_query($conn, $insertSQL);
+							   $rowPrecioBase = mysqli_fetch_array($resultPrecioBase);
 							}
 							if (isset($buscar) and $buscar!='')	{
 								 $insertSQL = "SELECT `nombreEmpresa` FROM `contactos` WHERE id =".$row["cliente"];
-	 					  	 $resultCliente = mysql_query($insertSQL);
-								 $rowCliente = mysql_fetch_array($resultCliente);
+	 					  	 $resultCliente = mysqli_query($conn, $insertSQL);
+								 $rowCliente = mysqli_fetch_array($resultCliente);
 		 	 		    	 $info=strtoupper($row["modelo"]."--".$row["descripcion"]."--".$row["cantidad"]."--".$rowCliente["nombreEmpresa"]."--".$rowPrecioBase['precioBase']."--".$row["NoPedClient"]."--".$row["ref"]);
 		 						 if (strstr($info,strtoupper($buscar))) {
     			 			 		echo '<tr><td valign="top"><center>'.$i.'</center></td><td valign="top">'.$row["marca"].'</td><td valign="top">'.$row["modelo"].'</td><td valign="top">'.$row["descripcion"].'</td><td valign="top" align="right">'.$row["cantidad"].'</td><td valign="top" align="right">';
@@ -555,8 +555,8 @@ if ($tipo=='Proveedor') {
 							} else {
     			 			 echo '<tr><td valign="top"><center>'.$i.'</center></td><td valign="top">'.$row["marca"].'</td><td valign="top">'.$row["modelo"].'</td><td valign="top">'.$row["descripcion"].'</td><td valign="top" align="right">'.$row["cantidad"].'</td><td valign="top" align="right">';
   							 $insertSQL = "SELECT `nombreEmpresa` FROM `contactos` WHERE id =".$row["cliente"];
-	 					  	 $resultCliente = mysql_query($insertSQL);
-								 $rowCliente = mysql_fetch_array($resultCliente);
+	 					  	 $resultCliente = mysqli_query($conn, $insertSQL);
+								 $rowCliente = mysqli_fetch_array($resultCliente);
 								 echo $rowCliente["nombreEmpresa"].'</td>';
 			  				 echo '<td valign="top" align=right><a >'.($rowPrecioBase['precioBase']).'</a></td><td valign="top">'.$row["pedidoFecha"].'</td><td valign="top"><a  style="text-decoration: none;" href="ensenarContacto.php?id='.$id.'&quitar=set&idHerramienta='.$row['id'].'">X</a></td>';
 								 $total+=$rowPrecioBase['precioBase']*$row["cantidad"];
@@ -576,13 +576,13 @@ if ($tipo=='Proveedor') {
 		 if (isset($enviado)) {
 		 		if (isset($idHerramienta)) {
 				 		$insertSQL="select * from cotizacionHerramientas WHERE id=".$idHerramienta;
-		 				$result = mysql_query($insertSQL);
-						$row = mysql_fetch_array($result);
+		 				$result = mysqli_query($conn, $insertSQL);
+						$row = mysqli_fetch_array($result);
 						if ($row['enviadoFecha']=='0000-00-00')
 				 		   $insertSQL="UPDATE cotizacionHerramientas SET enviadoFecha=now() WHERE id=".$idHerramienta;
 						else
 							 $insertSQL="UPDATE cotizacionHerramientas SET enviadoFecha='0000-00-00' WHERE id=".$idHerramienta;
-		 				$result = mysql_query($insertSQL);
+		 				$result = mysqli_query($conn, $insertSQL);
 				} 		
 	 	 }
 
@@ -608,14 +608,14 @@ if ($tipo=='Proveedor') {
 	 	 echo '<table  border="1" cellpadding="1" cellspacing="1" summary="" frame="border" >';
 	   echo '<tr><td><center><b>#</b></center></td><td><b>Enviado</b></td><td><b>Recibir</b></td><td><b>Marca</b></td><td><b>Modelo</b></td><td><b>Cant.</b></td><td><b>Descripci�n</b></td><td><b>Cliente</b></td><td><b>Pedido</b></td><td><b>Fecha</b></td><td><b>Ref.</b></td></tr>';
 	   $insertSQL = "SELECT * FROM cotizacionHerramientas WHERE Proveedor='".strtoupper($nombreEmpresa)."' AND recibidoFecha='0000-00-00' ORDER BY modelo";//AND proveedorFecha!='0000-00-00' 
-		 $result = mysql_query($insertSQL);
+		 $result = mysqli_query($conn, $insertSQL);
 		 $i=1;
-		 while ($row = mysql_fetch_array($result)) {
+		 while ($row = mysqli_fetch_array($result)) {
 
 				if (isset($buscar) and $buscar!='')	{
 					 $insertSQL = "SELECT `nombreEmpresa` FROM `Contactos` WHERE id =".$row["cliente"];
-	 			 	 $resultCliente = mysql_query($insertSQL);
-					 $rowCliente = mysql_fetch_array($resultCliente);
+	 			 	 $resultCliente = mysqli_query($conn, $insertSQL);
+					 $rowCliente = mysqli_fetch_array($resultCliente);
 		 	 	 	 $info=strtoupper($row["modelo"]."--".$row["descripcion"]."--".$row["cantidad"]."--".$rowCliente["nombreEmpresa"]."--".$rowPrecioBase['precioBase']."--".$row["NoPedClient"]."--".$row["ref"]."--".$row["noDePedido"]."--".$row["pedidoFecha"]."--".$row["enviadoFecha"]."--".$row["ref_recibir"]);
 		 		   if (strstr($info,strtoupper($buscar))) {
 
@@ -645,8 +645,8 @@ if ($tipo=='Proveedor') {
 										 echo '<input type="hidden" name="recibir" value="set" />';
 										 
 										 $insertSQL = "SELECT costo FROM `cotizacionherramientas` WHERE marca = '".$row["marca"]."' AND `modelo` = '".$row["modelo"]."' AND costo > 0 ORDER BY recibidoFecha DESC limit 0,1";
-										 $resultPrecioAntes = mysql_query($insertSQL);
-										 $rowPrecioAntes = mysql_fetch_array($resultPrecioAntes);
+										 $resultPrecioAntes = mysqli_query($conn, $insertSQL);
+										 $rowPrecioAntes = mysqli_fetch_array($resultPrecioAntes);
 										 
 										 echo '<input type="text" name="precio" size="5" value="'.$rowPrecioAntes["costo"].'" />';
 										 echo '<input type="text" name="descuento" value="'.$descuento.'" size="2" />';
@@ -681,8 +681,8 @@ if ($tipo=='Proveedor') {
 							} else {
 							   if ($rowCliente["nombreEmpresa"]=='ALMACEN') {
 								    $insertSQL = 'select NoPedClient from cotizacion where id = '.$row["cotizacionNo"];
-          	 			 	$resultVendedor = mysql_query($insertSQL);
-          					$rowVendedor = mysql_fetch_array($resultVendedor);
+          	 			 	$resultVendedor = mysqli_query($conn, $insertSQL);
+          					$rowVendedor = mysqli_fetch_array($resultVendedor);
 							   	  echo $rowVendedor["NoPedClient"].'</td>';
 										
 							   		
@@ -694,13 +694,13 @@ if ($tipo=='Proveedor') {
 			  			echo '<td valign="top"><a name="marca">'.$row["noDePedido"].'</a></td><td valign="top">'.$row["pedidoFecha"].'</td><td align=right>';
 /*							if (strtoupper($row["marca"])=="SNAPON") {
 							   $insertSQL = "SELECT `precioBase` FROM PrecioSnapon WHERE ref ='".$row["modelo"]."'";
-								 $resultPrecio = mysql_query($insertSQL);
-								 $rowPrecio = mysql_fetch_array($resultPrecio);
+								 $resultPrecio = mysqli_query($conn, $insertSQL);
+								 $rowPrecio = mysqli_fetch_array($resultPrecio);
 								 echo .6*$rowPrecio["precioBase"];
 							}	elseif (strtoupper($row["marca"])=="APEX") {
 							   $insertSQL = "SELECT `precioBase` FROM PrecioApex WHERE ref ='".$row["modelo"]."'";
-								 $resultPrecio = mysql_query($insertSQL);
-								 $rowPrecio = mysql_fetch_array($resultPrecio);
+								 $resultPrecio = mysqli_query($conn, $insertSQL);
+								 $rowPrecio = mysqli_fetch_array($resultPrecio);
 								 echo .5*$rowPrecio["precioBase"];
 							}
 	*/
@@ -755,15 +755,15 @@ if ($tipo=='Proveedor') {
 							
 							echo $row["marca"].'</td><td valign="top"><a href="http://buy1.snapon.com/catalog/search.asp?partno='.$row["modelo"].'&searchTrnsfr=true&search_type=Part&store=snapon-store" target="snapon" style="text-decoration: none;">'.$row["modelo"].'</a></td><td valign="top" align="right">'.$row["cantidad"].'</td><td valign="top">'.SUBSTR($row["descripcion"],0,25).'</td><td valign="top" align="right">';
 							$insertSQL = "SELECT `nombreEmpresa` FROM `Contactos` WHERE id =".$row["cliente"];
-  	 					$resultCliente = mysql_query($insertSQL);
-							$rowCliente = mysql_fetch_array($resultCliente);
+  	 					$resultCliente = mysqli_query($conn, $insertSQL);
+							$rowCliente = mysqli_fetch_array($resultCliente);
 							if ($row["Entregado"]!='0000-00-00') {
 							   echo 'ALMACEN</td>';
 							} ELSE {
 							   if ($rowCliente["nombreEmpresa"]=='ALMACEN') {
 								    $insertSQL = 'select NoPedClient from cotizacion where id = '.$row["cotizacionNo"];
-          	 			 	$resultVendedor = mysql_query($insertSQL);
-          					$rowVendedor = mysql_fetch_array($resultVendedor);
+          	 			 	$resultVendedor = mysqli_query($conn, $insertSQL);
+          					$rowVendedor = mysqli_fetch_array($resultVendedor);
 							   	  echo $rowVendedor["NoPedClient"].'</td>';
 										
 							   		
@@ -775,8 +775,8 @@ if ($tipo=='Proveedor') {
 			  			echo '<td valign="top"><a name="marca">'.$row["noDePedido"].'</a></td><td valign="top">'.$row["pedidoFecha"].'</td><td align=right>';
 							if (strtoupper($row["marca"])=="SNAPON") {
 							   $insertSQL = "SELECT `precioBase` FROM PrecioSnapon WHERE ref ='".$row["modelo"]."'";
-								 $resultPrecio = mysql_query($insertSQL);
-								 $rowPrecio = mysql_fetch_array($resultPrecio);
+								 $resultPrecio = mysqli_query($conn, $insertSQL);
+								 $rowPrecio = mysqli_fetch_array($resultPrecio);
 								 echo .6*$rowPrecio["precioBase"];
 							}
 							echo '</td></tr>';
@@ -803,14 +803,14 @@ if ($tipo=='Proveedor') {
 	      echo '<tr><td><center><b>#</b></center></td><td><b>Enviado</b></td><td><b>Recibir</b></td><td><b>Marca</b></td><td><b><a href="ensenarContacto.php?id='.$id.'&modelo=1">Modelo</a></b></td><td><b>Cant.</b></td><td><b>Descripci�n</b></td><td><b><a href="ensenarContacto.php?id='.$id.'&cliente=1">Cliente</a></b></td><td><b>Pedido</b></td><td><b>Fecha</b></td><td><b>Ref.</b></td><td><b>C./V.</b></td></tr>';
   		    $insertSQL = "SELECT * FROM CotizacionHerramientas WHERE Proveedor='".strtoupper($nombreEmpresa)."' AND recibidoFecha!='0000-00-00' AND proveedorFecha!='0000-00-00' AND Entregado='0000-00-00' ORDER BY recibidoFecha";
   		 }
-  		 $result = mysql_query($insertSQL);
+  		 $result = mysqli_query($conn, $insertSQL);
 		 $i=1;
-		 while ($row = mysql_fetch_array($result)) {
+		 while ($row = mysqli_fetch_array($result)) {
 
 				if (isset($buscar) and $buscar!='')	{
 					 $insertSQL = "SELECT `nombreEmpresa`, tlf1 FROM `Contactos` WHERE id =".$row["cliente"];
-	 			 	 $resultCliente = mysql_query($insertSQL);
-					 $rowCliente = mysql_fetch_array($resultCliente);
+	 			 	 $resultCliente = mysqli_query($conn, $insertSQL);
+					 $rowCliente = mysqli_fetch_array($resultCliente);
 		 	 	 	 $info=strtoupper($row["modelo"]."--".$row["descripcion"]."--".$row["cantidad"]."--".$rowCliente["nombreEmpresa"]."--".$rowPrecioBase['precioBase']."--".$row["NoPedClient"]."--".$row["ref"]."--".$row["noDePedido"]."--".$row["pedidoFecha"]."--".$row["enviadoFecha"]."--".$row["recibidoFecha"]."--".$row["ref_recibir"]);
 		 		   if (strstr($info,strtoupper($buscar))) {
 
@@ -836,8 +836,8 @@ if ($tipo=='Proveedor') {
 
 							   if ($rowCliente["nombreEmpresa"]=='ALMACEN') {
 								    $insertSQL = 'select NoPedClient from cotizacion where id = '.$row["cotizacionNo"];
-          	 			 	$resultVendedor = mysql_query($insertSQL);
-          					$rowVendedor = mysql_fetch_array($resultVendedor);
+          	 			 	$resultVendedor = mysqli_query($conn, $insertSQL);
+          					$rowVendedor = mysqli_fetch_array($resultVendedor);
 							   	  echo $rowVendedor["NoPedClient"].'</td>';
 								 } else {
 							      echo substr($rowCliente["nombreEmpresa"],0,30).' - '.$rowCliente["tlf1"].'</td>';
@@ -882,13 +882,13 @@ if ($tipo=='Proveedor') {
 							
 							echo $row["marca"].'</td><td valign="top">'.$row["modelo"].'</td><td valign="top" align="right">'.$row["cantidad"].'</td><td valign="top">'.SUBSTR($row["descripcion"],0,25).'</td><td valign="top" align="right">';
 							$insertSQL = "SELECT `nombreEmpresa`, tlf1 FROM `Contactos` WHERE id =".$row["cliente"];
-  	 					$resultCliente = mysql_query($insertSQL);
-							$rowCliente = mysql_fetch_array($resultCliente);
+  	 					$resultCliente = mysqli_query($conn, $insertSQL);
+							$rowCliente = mysqli_fetch_array($resultCliente);
 
 							   if ($rowCliente["nombreEmpresa"]=='ALMACEN') {
 								    $insertSQL = 'select NoPedClient from cotizacion where id = '.$row["cotizacionNo"];
-          	 			 	$resultVendedor = mysql_query($insertSQL);
-          					$rowVendedor = mysql_fetch_array($resultVendedor);
+          	 			 	$resultVendedor = mysqli_query($conn, $insertSQL);
+          					$rowVendedor = mysqli_fetch_array($resultVendedor);
 							   	  echo $rowVendedor["NoPedClient"].'</td>';
 								 } else {
 							      echo substr($rowCliente["nombreEmpresa"],0,30).' - '.$rowCliente["tlf1"].'</td>';
@@ -928,13 +928,13 @@ if ($tipo=='Proveedor') {
         	      echo '<tr><td><center><b>#</b></center></td><td><b>Enviado</b></td><td><b>Recibir</b></td><td><b>Marca</b></td><td><b><a href="ensenarContacto.php?id='.$id.'&modelo=1">Modelo</a></b></td><td><b>Cant.</b></td><td><b>Descripci�n</b></td><td><b>Precio</b></td><td><b><a href="ensenarContacto.php?id='.$id.'&cliente=1">Cliente</a></b></td><td><b>Pedido</b></td><td><b>Fecha</b></td><td><b>Ref.</b></td></tr>';
         		    $insertSQL = "SELECT * FROM CotizacionHerramientas WHERE Proveedor='".strtoupper($nombreEmpresa)."' AND recibidoFecha!='0000-00-00' AND proveedorFecha!='0000-00-00' AND Entregado!='0000-00-00' AND recibidoFecha!='0000-00-00' ORDER BY modelo";
         		 }
-        		 $result = mysql_query($insertSQL);
+        		 $result = mysqli_query($conn, $insertSQL);
         		 $i=1;
-        		 while ($row = mysql_fetch_array($result)) {
+        		 while ($row = mysqli_fetch_array($result)) {
         
         					 $insertSQL = "SELECT `nombreEmpresa`, tlf1 FROM `Contactos` WHERE id =".$row["cliente"];
-        	 			 	 $resultCliente = mysql_query($insertSQL);
-        					 $rowCliente = mysql_fetch_array($resultCliente);
+        	 			 	 $resultCliente = mysqli_query($conn, $insertSQL);
+        					 $rowCliente = mysqli_fetch_array($resultCliente);
         		 	 	 	 $info=strtoupper($row["modelo"]."--".$row["descripcion"]."--".$row["cantidad"]."--".$rowCliente["nombreEmpresa"]."--".$rowPrecioBase['precioBase']."--".$row["NoPedClient"]."--".$row["ref"]."--".$row["noDePedido"]."--".$row["pedidoFecha"]."--".$row["enviadoFecha"]."--".$row["recibidoFecha"]."--".$row["ref_recibir"]);
         		 		   if (strstr($info,strtoupper($buscar))) {
         
@@ -988,8 +988,8 @@ if ($tipo=='Proveedor') {
 
 
    $insertSQL = "SELECT cambio FROM tipodecambio ORDER BY fecha DESC LIMIT 0,1";
-   $resultCurrency = mysql_query($insertSQL);
-   $rowCurrency = mysql_fetch_array($resultCurrency);
+   $resultCurrency = mysqli_query($conn, $insertSQL);
+   $rowCurrency = mysqli_fetch_array($resultCurrency);
    $cambio=$rowCurrency['cambio'];
     echo '<table summary="" border="1" cellpadding="2" cellspacing="0">';
     echo '<tr><td><b>Pago. Prom.</b></td><td><b>Deuda</b></td><td><b>Ult. Pago</b></td><td><b>Prox. Pago</b></td></tr></td></tr>';
@@ -997,14 +997,14 @@ if ($tipo=='Proveedor') {
 		echo '<tr><td valign="top" align=center>';
 
 											$insertSQL = "SELECT amount,date,currency FROM payments WHERE client =".$row['id']." ORDER BY date DESC";
-											$resultPago = mysql_query($insertSQL);
-											$num_rows = mysql_num_rows($resultPago);
+											$resultPago = mysqli_query($conn, $insertSQL);
+											$num_rows = mysqli_num_rows($resultPago);
 											$no_of_payment=0;
 											if ($num_rows==0) {
 											   echo 'N/P';
 											} else {
 											   $average_payment=0;
-											   while ($rowPago = mysql_fetch_array($resultPago)) {
+											   while ($rowPago = mysqli_fetch_array($resultPago)) {
 												 		if ($rowPago['currency']=='usd')
 													  	 $average_payment+=$rowPago['amount']*$cambio;
 														else
@@ -1021,19 +1021,19 @@ if ($tipo=='Proveedor') {
 											echo "</td>";
 											$id_cliente=$row['id'];
 											$insertSQL = "SELECT sum( precioTotal * (1+IVA) - Pagado ) FROM Cotizacion WHERE factura!='0' AND Pedido != '0000-00-00' AND moneda='usd' AND `Pagado` < 1.14 * `precioTotal` AND cliente =".$row['id']." ORDER BY facturaFecha DESC";
-											$resultCredit = mysql_query($insertSQL);
-											$rowCredit = mysql_fetch_array($resultCredit);
+											$resultCredit = mysqli_query($conn, $insertSQL);
+											$rowCredit = mysqli_fetch_array($resultCredit);
 											$credit=0;
 											$credit=$rowCredit['sum( precioTotal * (1+IVA) - Pagado )']*$cambio;
 											$insertSQL = "SELECT sum( precioTotal * (1+IVA) - Pagado ) FROM Cotizacion WHERE factura!='0' AND Pedido != '0000-00-00' AND moneda='mxn' AND `Pagado` < 1.14 * `precioTotal` AND cliente =".$row['id']." ORDER BY facturaFecha DESC";
-											$resultCredit = mysql_query($insertSQL);
-											$rowCredit = mysql_fetch_array($resultCredit);
+											$resultCredit = mysqli_query($conn, $insertSQL);
+											$rowCredit = mysqli_fetch_array($resultCredit);
 											$credit+=$rowCredit['sum( precioTotal * (1+IVA) - Pagado )'];
 											
 											echo "<td valign='top' align=center><big><b><font color='red'>".number_format($credit,2,'.',',')."</font></b></big></td>";
 											$insertSQL = "SELECT date FROM payments WHERE client =".$row['id']." ORDER BY date DESC LIMIT 0,5";
-											$resultPago = mysql_query($insertSQL);
-											$rowPago = mysql_fetch_array($resultPago);
+											$resultPago = mysqli_query($conn, $insertSQL);
+											$rowPago = mysqli_fetch_array($resultPago);
 											$day_since_last_payment = round((strtotime('today')-strtotime($rowPago['date']))/(60*60*24));
 											$lastMonth = date('Y-m-d', strtotime('last month'));		
 											$average_payment=$rowPago['sum( amount )']/5;
@@ -1043,9 +1043,9 @@ if ($tipo=='Proveedor') {
 												 echo "<td valign='top' align=center>".$day_since_last_payment." d</td>";
 
                       $insertSQL = "SELECT * FROM Cotizacion WHERE factura!=0 AND Pedido != '0000-00-00' AND `Pagado` < 1.14 * `precioTotal` AND cliente=".$id." ORDER BY factura LIMIT 0 , 1 ";
-                     	$result = mysql_query($insertSQL);
-                  		$num_rows = mysql_num_rows($result);
-                  	  $row = mysql_fetch_array($result);
+                     	$result = mysqli_query($conn, $insertSQL);
+                  		$num_rows = mysqli_num_rows($result);
+                  	  $row = mysqli_fetch_array($result);
                       echo '<td valign="top"><center><a  style="text-decoration: none;" href="../pedidos/verPedido.php?CotizacionNo='.$row['id'].'">';
                   		$year = substr($row['facturaFecha'],0,4);
                   		$month = substr($row['facturaFecha'],5,2);									 
@@ -1064,7 +1064,7 @@ if ($tipo=='Proveedor') {
 		
           //showing reporte	 
 /*          	 		$insertSQL = "SELECT * FROM inventarioCamionetas WHERE vendedor='".$idVendedor."' AND cantidad!=0 ORDER BY modelo";
-          			$result = mysql_query($insertSQL);
+          			$result = mysqli_query($conn, $insertSQL);
   */        	 		echo '<center><h2><b>Reporte</b></h2></center>';
           	 		$i=1;
           			$total=0;
@@ -1086,13 +1086,13 @@ if ($tipo=='Proveedor') {
           			$firstdate = mktime(0, 0, 0, $today[mon], $today[mday], $today[year]);			
           			$firstdate = date("Y-m-d", $firstdate);
            			$insertSQL = 'select sum(precioLista) from cotizacionHerramientas where cliente='.$id.' AND Entregado="'.$firstdate.'"';
-          			$resultEntrega = mysql_query($insertSQL);
-          			$rowEntrega = mysql_fetch_array($resultEntrega);
+          			$resultEntrega = mysqli_query($conn, $insertSQL);
+          			$rowEntrega = mysqli_fetch_array($resultEntrega);
 //          			echo '<td align=right>'.$rowEntrega['sum(precioLista*1.15)'].'</td>';
           
           			$insertSQL = 'select sum(amount) from payments where client='.$id.' AND date="'.$firstdate.'"';
-          			$resultCobranza = mysql_query($insertSQL);
-          			$rowCobranza = mysql_fetch_array($resultCobranza);
+          			$resultCobranza = mysqli_query($conn, $insertSQL);
+          			$rowCobranza = mysqli_fetch_array($resultCobranza);
 //          			echo '<td align=right>'.$rowCobranza['sum(amount)'].'</td></tr>';
           
           
@@ -1106,24 +1106,24 @@ if ($tipo=='Proveedor') {
           		  echo '<tr><td align=center>'.$week.'</td>';
           
 								$insertSQL = 'select cambio from tipodecambio order by fecha desc limit 0,1';  
-          			$resultTC = mysql_query($insertSQL);
-          			$rowTC = mysql_fetch_array($resultTC);
+          			$resultTC = mysqli_query($conn, $insertSQL);
+          			$rowTC = mysqli_fetch_array($resultTC);
 		
           			$insertSQL = 'select sum(cantidad*precioLista) from cotizacionHerramientas where moneda="usd" and cliente='.$id.' AND Entregado<="'.$lastdate.'" AND Entregado>"'.$firstdate.'"' ;
-          			$resultEntrega = mysql_query($insertSQL);
-          			$rowEntregaUSD = mysql_fetch_array($resultEntrega);
+          			$resultEntrega = mysqli_query($conn, $insertSQL);
+          			$rowEntregaUSD = mysqli_fetch_array($resultEntrega);
           			$insertSQL = 'select sum(cantidad*precioLista) from cotizacionHerramientas where moneda="mxn" and cliente='.$id.' AND Entregado<="'.$lastdate.'" AND Entregado>"'.$firstdate.'"' ;
-          			$resultEntrega = mysql_query($insertSQL);
-          			$rowEntregaMXN = mysql_fetch_array($resultEntrega);
+          			$resultEntrega = mysqli_query($conn, $insertSQL);
+          			$rowEntregaMXN = mysqli_fetch_array($resultEntrega);
 								$EntregaWeek=(1+$IVA)*$rowEntregaMXN['sum(cantidad*precioLista)']+$rowEntregaUSD['sum(cantidad*precioLista)']*$rowTC['cambio'];								
           			echo '<td align=right>'.round($EntregaWeek,2).'</td>';
           
           			$insertSQL = 'select sum(amount) from payments where currency="usd" AND client="'.$id.'" AND date<="'.$lastdate.'" AND date>"'.$firstdate.'"' ;
-          			$resultCobranza = mysql_query($insertSQL);
-          			$rowCobranzaUSD = mysql_fetch_array($resultCobranza);
+          			$resultCobranza = mysqli_query($conn, $insertSQL);
+          			$rowCobranzaUSD = mysqli_fetch_array($resultCobranza);
           			$insertSQL = 'select sum(amount) from payments where currency="mxn" AND client="'.$id.'" AND date<="'.$lastdate.'" AND date>"'.$firstdate.'"' ;
-          			$resultCobranza = mysql_query($insertSQL);
-          			$rowCobranzaMXN = mysql_fetch_array($resultCobranza);
+          			$resultCobranza = mysqli_query($conn, $insertSQL);
+          			$rowCobranzaMXN = mysqli_fetch_array($resultCobranza);
 								$CobranzaWeek=$rowCobranzaMXN['sum(amount)']+$rowCobranzaUSD['sum(amount)']*$rowTC['cambio'];
           			echo '<td align=right>'.round($CobranzaWeek,2).'</td></tr>';
           '<br>';
@@ -1153,16 +1153,16 @@ if ($tipo=='Proveedor') {
     if (isset($buscar) and $buscar!='') {
 		//buscar en facturas no entregados
 	  $insertSQL = "SELECT * FROM Cotizacion WHERE Pedido!='0000-00-00' AND fechaEntregado='0000-00-00' and cliente=".$id." ORDER BY factura DESC";
-		$result = mysql_query($insertSQL);
+		$result = mysqli_query($conn, $insertSQL);
 	
 		echo "<b>No Entregado:</b>";
 	  echo '<table  border="1" cellpadding="1" cellspacing="1" summary="" frame="border" >';
 		echo '<tr><td><center>En d�as</center></td><td>Ref.</td><td>Cliente</td><td>Contacto</td><td>Fecha</td><td>Cant.</td><td>Suma</td></tr>';
 		$i=1;
-		while ($row = mysql_fetch_array($result)) {
+		while ($row = mysqli_fetch_array($result)) {
 	    		$insertSQL = "SELECT * FROM Contactos WHERE id=".$row['cliente'];
-      		$res = mysql_query($insertSQL);
-      		$r = mysql_fetch_array($res);
+      		$res = mysqli_query($conn, $insertSQL);
+      		$r = mysqli_fetch_array($res);
 
   			  $precioConIva=ROUND($row["precioTotal"],2)+ROUND($row["precioTotal"]*$row["IVA"],2);
 		 			$precioConIva = ROUND($precioConIva,2);
@@ -1205,16 +1205,16 @@ if ($tipo=='Proveedor') {
 		
 		//buscar en facturas no pagados
     $insertSQL = "SELECT * FROM Cotizacion WHERE factura!='0' AND Pedido != '0000-00-00' AND `Pagado` < ((1+`IVA`) * `precioTotal`)-.01 AND cliente=".$id." ORDER BY factura DESC";
-   	$result = mysql_query($insertSQL);
+   	$result = mysqli_query($conn, $insertSQL);
 		echo "<b>No Pagado:</b>";
 	  echo '<table  border="1" cellpadding="1" cellspacing="1" summary="" frame="border" >';
 		echo '<tr><td><center>En d�as</center></td><td>Ref.---</td><td>Cliente</td><td>Contacto</td><td>Fecha</td><td>Fecha Pago</td><td>Cant.</td><td>Suma</td></tr>';
 		$i=1;
 		
-		while ($row = mysql_fetch_array($result)) {
+		while ($row = mysqli_fetch_array($result)) {
 	    		$insertSQL = "SELECT * FROM Contactos WHERE id=".$row['cliente'];
-      		$res = mysql_query($insertSQL);
-      		$r = mysql_fetch_array($res);
+      		$res = mysqli_query($conn, $insertSQL);
+      		$r = mysqli_fetch_array($res);
 			    $precioConIva=ROUND($row["precioTotal"]+$row["ivaTotal"],2);
 		 			if (strstr($precioConIva,".")) {
 			  		 $len = strlen($precioConIva);
@@ -1261,15 +1261,15 @@ if ($tipo=='Proveedor') {
 		
 		//buscar en facturas terminados
 	  $insertSQL = "SELECT * FROM Cotizacion WHERE fechaEntregado!='0000-00-00' and cliente=".$id." and Pagado>(1.16*precioTotal)-.1 and Pagado>0 ORDER BY factura DESC";
-    $result = mysql_query($insertSQL);
+    $result = mysqli_query($conn, $insertSQL);
 		echo "<b>Terminados:</b>";
 	  echo '<table  border="1" cellpadding="1" cellspacing="1" summary="" frame="border" >';
 		echo '<tr><td><center>En d�as</center></td><td>Ref.</td><td>Cliente</td><td>Contacto</td><td>Fecha</td><td>Cant.</td><td>Suma</td></tr>';
 		$i=1;
-		while ($row = mysql_fetch_array($result)) {
+		while ($row = mysqli_fetch_array($result)) {
 	    		$insertSQL = "SELECT * FROM Contactos WHERE id=".$row['cliente'];
-      		$res = mysql_query($insertSQL);
-      		$r = mysql_fetch_array($res);
+      		$res = mysqli_query($conn, $insertSQL);
+      		$r = mysqli_fetch_array($res);
 			    $precioConIva=ROUND($row["precioTotal"],2)+ROUND($row["precioTotal"]*$row["IVA"],2);
 		 			$precioConIva = ROUND($precioConIva,2);
 		 			if (strstr($precioConIva,".")) {
@@ -1311,15 +1311,15 @@ if ($tipo=='Proveedor') {
 		
 		//buscar en cotizaciones
 	 	$insertSQL = "SELECT * FROM Cotizacion WHERE remision=0 and comentario='' and cliente=".$id." ORDER BY fecha DESC";
-   	$result = mysql_query($insertSQL);
+   	$result = mysqli_query($conn, $insertSQL);
 		echo "<b>Cotizaciones:</b>";
 	  echo '<table  border="1" cellpadding="1" cellspacing="1" summary="" frame="border" >';
 		echo '<tr><td><center>En d�as</center></td><td>Ref.</td><td>Cliente</td><td>Contacto</td><td>Fecha</td><td>Cant.</td><td>Suma</td></tr>';
 		$i=1;
-		while ($row = mysql_fetch_array($result)) {
+		while ($row = mysqli_fetch_array($result)) {
 	    		$insertSQL = "SELECT * FROM Contactos WHERE id=".$row['cliente'];
-      		$res = mysql_query($insertSQL);
-      		$r = mysql_fetch_array($res);
+      		$res = mysqli_query($conn, $insertSQL);
+      		$r = mysqli_fetch_array($res);
 
 				  $precioConIva=ROUND($row["precioTotal"],2)+ROUND($row["precioTotal"]*$row["IVA"],2);
 		 			$precioConIva = ROUND($precioConIva,2);
@@ -1362,16 +1362,16 @@ if ($tipo=='Proveedor') {
 		
 		//buscar en herramientas no entregados
 	   $insertSQL = "SELECT * FROM CotizacionHerramientas WHERE cliente=".$id." AND Pedido='si' AND Entregado='0000-00-00' ORDER BY modelo";
-		 $result = mysql_query($insertSQL);
+		 $result = mysqli_query($conn, $insertSQL);
 
 		echo "<b>Herramientas Pedido:</b>";
 	  echo '<table  border="1" cellpadding="1" cellspacing="1" summary="" frame="border" >';
 	     echo '<tr><td><b>#</b></td><td><b>Marca</b></td><td><b>Modelo</b></td><td><b>Descripci�n</b></td><td><b>Cant.</b></td><td><b>Precio Unidad</b></td><td><b>Pedido</b></td><td><b>Orden</b></td><td><b>Enviado</b></td><td><b>Recibido</b></td></tr>';
 		$i=1;
-		while ($row1 = mysql_fetch_array($result)) {
+		while ($row1 = mysqli_fetch_array($result)) {
 	    		$insertSQL = "SELECT * FROM Contactos WHERE id=".$row1['cliente'];
-      		$res = mysql_query($insertSQL);
-      		$r = mysql_fetch_array($res);
+      		$res = mysqli_query($conn, $insertSQL);
+      		$r = mysqli_fetch_array($res);
 
 			    $precioConIva=ROUND($row["precioTotal"],2)+ROUND($row["precioTotal"]*$row["IVA"],2);
 		 			$precioConIva = ROUND($precioConIva,2);
@@ -1415,16 +1415,16 @@ if ($tipo=='Proveedor') {
 		
 		//buscar en herramientas entregados
 	   $insertSQL = "SELECT * FROM CotizacionHerramientas WHERE cliente=".$id." AND Entregado!='0000-00-00' ORDER BY modelo";
-  	 $result = mysql_query($insertSQL);
+  	 $result = mysqli_query($conn, $insertSQL);
 
 		echo "<b>Herramientas Entregadas:</b>";
 	  echo '<table  border="1" cellpadding="1" cellspacing="1" summary="" frame="border" >';
 	     echo '<tr><td><b>#</b></td><td><b>Marca</b></td><td><b>Modelo</b></td><td><b>Descripci�n</b></td><td><b>Cant.</b></td><td><b>Precio Unidad</b></td><td><b>Factura</b></td><td><b>Orden</b></td><td><b>Entregado</b></td></tr>';
 		$i=1;
-		while ($row1 = mysql_fetch_array($result)) {
+		while ($row1 = mysqli_fetch_array($result)) {
 	    		$insertSQL = "SELECT * FROM Contactos WHERE id=".$row1['cliente'];
-      		$res = mysql_query($insertSQL);
-      		$r = mysql_fetch_array($res);
+      		$res = mysqli_query($conn, $insertSQL);
+      		$r = mysqli_fetch_array($res);
 
 			    $precioConIva=ROUND($row["precioTotal"],2)+ROUND($row["precioTotal"]*$row["IVA"],2);
 		 			$precioConIva = ROUND($precioConIva,2);
@@ -1458,8 +1458,8 @@ if ($tipo=='Proveedor') {
 								    $insertSQL = "SELECT * FROM Cotizacion WHERE id=".$row1['cotizacionNo'];
 								 
 								 }
-      		          $resultNoFactura = mysql_query($insertSQL);
-      		       $rowNoFactura = mysql_fetch_array($resultNoFactura);
+      		          $resultNoFactura = mysqli_query($conn, $insertSQL);
+      		       $rowNoFactura = mysqli_fetch_array($resultNoFactura);
   		           echo '<td valign="top">'.$rowNoFactura["factura"];
 								 echo '</td><td valign="top"><a href="../proveedores/creandoOrdenDeCompra.php?noOC='.$row1["noDePedido"].'" style="text-decoration: none;">'.$row1["noDePedido"].'</a></td>';
 							   if ($row1["Entregado"]=='0000-00-00') 
@@ -1478,16 +1478,16 @@ if ($tipo=='Proveedor') {
 			
 		//buscar en herramientas cotizados
 	   $insertSQL = "SELECT * FROM CotizacionHerramientas WHERE cliente=".$id." and Pedido='no' ORDER BY modelo";
-  	 $result = mysql_query($insertSQL);
+  	 $result = mysqli_query($conn, $insertSQL);
 
 		echo "<b>Herramientas Cotizadas:</b>";
 	  echo '<table  border="1" cellpadding="1" cellspacing="1" summary="" frame="border" >';
 	     echo '<tr><td><b>#</b></td><td><b>Marca</b></td><td><b>Modelo</b></td><td><b>Descripci�n</b></td><td><b>Cant.</b></td><td><b>Precio Unidad</b></td><td><b>Pedido</b></td><td><b>Entregado</b></td></tr>';
 		$i=1;
-		while ($row1 = mysql_fetch_array($result)) {
+		while ($row1 = mysqli_fetch_array($result)) {
 	    		$insertSQL = "SELECT * FROM Contactos WHERE id=".$row1['cliente'];
-      		$res = mysql_query($insertSQL);
-      		$r = mysql_fetch_array($res);
+      		$res = mysqli_query($conn, $insertSQL);
+      		$r = mysqli_fetch_array($res);
 
 			    $precioConIva=ROUND($row["precioTotal"],2)+ROUND($row["precioTotal"]*$row["IVA"],2);
 		 			$precioConIva = ROUND($precioConIva,2);
@@ -1522,13 +1522,13 @@ if ($tipo=='Proveedor') {
 		} else {
 		
 	  $insertSQL = "SELECT * FROM Cotizacion WHERE Pedido!='0000-00-00' AND fechaEntregado='0000-00-00' and cliente=".$id." ORDER BY factura DESC";
-		$result = mysql_query($insertSQL);
+		$result = mysqli_query($conn, $insertSQL);
 	 	echo "<br>";
 	 	echo "<b>No Entregado:</b>";
 	 	echo '<table  border="1" cellpadding="1" cellspacing="1" summary="" frame="border" >';
 	 	echo '<tr><td>En d�as</td><td>Ref.</td><td>Fecha</td><td>Cant.</td><td>Suma</td></tr>';
 	 	$i=1;
-	 	while ($row = mysql_fetch_array($result)) {
+	 	while ($row = mysqli_fetch_array($result)) {
 		 if ($row["fechaEntregado"]=="0000-00-00") {
 	    echo '<tr><td valign="top"><center><a  style="text-decoration: none;" href="../pedidos/verPedido.php?CotizacionNo='.$row['id'].'">';
 			$year = substr($row['Pedido'],0,4);
@@ -1547,7 +1547,7 @@ if ($tipo=='Proveedor') {
 		echo $total_por_entregar;
 	  echo "<br><b>Herramientas que no han sido entregadas:</b>";
 //	  $insertSQL = "SELECT * FROM Cotizacion WHERE Pedido!='0000-00-00' and fechaEntregado='0000-00-00' and cliente=".$id." ORDER BY fecha";
-//		$result = mysql_query($insertSQL);
+//		$result = mysqli_query($conn, $insertSQL);
 	  $todoMarcas=" ";
 	  if (isset($marca)) {
 	     echo '<table  border="1" cellpadding="1" cellspacing="1" summary="" frame="border" >';
@@ -1559,10 +1559,10 @@ if ($tipo=='Proveedor') {
        echo "<br><a href='ensenarContacto.php?id=".$id."&marca=TODO' style='text-decoration: none;'>TODO</a>";
 	  }
 
-//	  while ($row = mysql_fetch_array($result)) {
+//	  while ($row = mysqli_fetch_array($result)) {
 	    $insertSQL = "SELECT * FROM CotizacionHerramientas WHERE pedidoFecha!='0000-00-00' and cliente=".$id." and Entregado='0000-00-00' order by modelo ";//CotizacionNo='".$row['id']."' AND 
-		  $result1 = mysql_query($insertSQL);
-	    while ($row1 = mysql_fetch_array($result1)) {
+		  $result1 = mysqli_query($conn, $insertSQL);
+	    while ($row1 = mysqli_fetch_array($result1)) {
 		     if ($row1['Entregado']=="0000-00-00") {
 			     if (isset($marca)) {
 				      if ($row1["marca"]==$marca or $marca=='TODO') {
@@ -1578,17 +1578,17 @@ if ($tipo=='Proveedor') {
           			 //que hay en existencia
          			 
           			 $insertSQL1 = "SELECT * FROM `marcadeherramientas`";
-           	     $resultMarcasHerr = mysql_query($insertSQL1);
+           	     $resultMarcasHerr = mysqli_query($conn, $insertSQL1);
           			 $marca11='none';
-          	     while ($rowMarcasHerr = mysql_fetch_array($resultMarcasHerr)) {
+          	     while ($rowMarcasHerr = mysqli_fetch_array($resultMarcasHerr)) {
           			    if ($row1["marca"]==$rowMarcasHerr["marca"])
           					   $marca11=$rowMarcasHerr["marca"];
           			 }
           			 echo '<td valign="top" align="center">';
           			 if ($marca11!='none') {
           	        $insertSQL = "SELECT enReserva FROM Precio".$row1["marca"]." where ref='".$row1["modelo"]."'";
-           	        $resultAlm = mysql_query($insertSQL);
-           	        $rowAlm = mysql_fetch_array($resultAlm);
+           	        $resultAlm = mysqli_query($conn, $insertSQL);
+           	        $rowAlm = mysqli_fetch_array($resultAlm);
           			    echo $rowAlm['enReserva']; 
           			 } else {
           			    echo 'N/A'; 			 
@@ -1596,21 +1596,21 @@ if ($tipo=='Proveedor') {
           			 echo '</td>';
 
 
-          			   //mysql_close($conn);
+          			   //mysqli_close($conn);
           	       include "../incl/connect_trucks.incl";
           				 
           				 $insertSQL = "SELECT * FROM `inventariocamionetas` where marca = '".$row1["marca"]."' and modelo = '".$row1["modelo"]."' and cantidad > 0";
-          				 $result_trucks=mysql_query($insertSQL);
+          				 $result_trucks=mysqli_query($conn, $insertSQL);
           				 
-          				 $number=mysql_num_rows($result_trucks);
+          				 $number=mysqli_num_rows($result_trucks);
 			   					 
 									 if ($number!=0)
 									    echo '<td align=center><a href="../embarques/camionetas/camionetas.php?idVendedor=adm&menu=admInventario&busca='.$row1["modelo"].'" style="text-decoration: none;">'.$number.'</a></td>';
 									 else
 									    echo '<td align=center>-</td>';
           				 
-          			   mysql_query($insertSQL);
-          			   //mysql_close($conn);
+          			   mysqli_query($conn, $insertSQL);
+          			   //mysqli_close($conn);
           	       include "../incl/connect.incl";
 									 
 								 
@@ -1619,23 +1619,23 @@ if ($tipo=='Proveedor') {
 
 			           if ($row1["noDePedido"]=='' and  $row1["Proveedor"]=='ALMACEN') {
           				  $insertSQL = "SELECT NoPedClient FROM `cotizacion` where id=".$row1["cotizacionNo"];
-          				  $result_NoPed=mysql_query($insertSQL);
-										$row_NoPed = mysql_fetch_array($result_NoPed);
+          				  $result_NoPed=mysqli_query($conn, $insertSQL);
+										$row_NoPed = mysqli_fetch_array($result_NoPed);
 								    echo '<td valign="top">'.$row_NoPed["NoPedClient"].'</td><td valign="top">'.$row1["Proveedor"].'</td>';								 
 			           } elseif ($row1["noDePedido"]=='' and  $row1["Proveedor"]!='') {
           				  $insertSQL = "SELECT NoPedClient FROM `cotizacion` where id=".$row1["cotizacionNo"];
-          				  $result_NoPed=mysql_query($insertSQL);
-										$row_NoPed = mysql_fetch_array($result_NoPed);
+          				  $result_NoPed=mysqli_query($conn, $insertSQL);
+										$row_NoPed = mysqli_fetch_array($result_NoPed);
 								    echo '<td valign="top">'.$row_NoPed["NoPedClient"].'</td><td valign="top" style="color: ORANGE">SIN PED.</td>';								 
 				         } elseif ($row1["noDePedido"]=='') {
           				  $insertSQL = "SELECT NoPedClient FROM `cotizacion` where id=".$row1["cotizacionNo"];
-          				  $result_NoPed=mysql_query($insertSQL);
-										$row_NoPed = mysql_fetch_array($result_NoPed);
+          				  $result_NoPed=mysqli_query($conn, $insertSQL);
+										$row_NoPed = mysqli_fetch_array($result_NoPed);
 								    echo '<td valign="top">'.$row_NoPed["NoPedClient"].'</td><td valign="top" style="color: RED">SIN PROV.</td>';								 
 								 } else {								 
           				  $insertSQL = "SELECT NoPedClient FROM `cotizacion` where id=".$row1["cotizacionNo"];
-          				  $result_NoPed=mysql_query($insertSQL);
-										$row_NoPed = mysql_fetch_array($result_NoPed);
+          				  $result_NoPed=mysqli_query($conn, $insertSQL);
+										$row_NoPed = mysqli_fetch_array($result_NoPed);
 								    echo '<td valign="top">'.$row_NoPed["NoPedClient"].'</td><td valign="top"><a href="../proveedores/creandoOrdenDeCompra.php?noOC='.$row1["noDePedido"].'" style="text-decoration: none;">'.$row1["noDePedido"].'</a></td>';
 								 }
 								 
@@ -1694,11 +1694,11 @@ if ($tipo=='Proveedor') {
 	 	$i=1;
 	 	$total=0;
     $insertSQL = "SELECT * FROM Cotizacion WHERE factura!='0' AND Pedido != '0000-00-00' AND `Pagado` < ((1+`IVA`) * `precioTotal`)-0.01 AND cliente=".$id." ORDER BY factura DESC";
-   	$result = mysql_query($insertSQL);
-		$num_rows = mysql_num_rows($result);
+   	$result = mysqli_query($conn, $insertSQL);
+		$num_rows = mysqli_num_rows($result);
 	 	echo "<br>";
 		$facturas = array();
-	  while ($row = mysql_fetch_array($result)) {
+	  while ($row = mysqli_fetch_array($result)) {
 		    if (strstr(strtoupper($row['factura']),'F'))
 		   	    $facturas[$row['id']]='999999'.substr($row['factura'],1);
 				else
@@ -1707,8 +1707,8 @@ if ($tipo=='Proveedor') {
 asort($facturas);
 foreach ($facturas as $key => $val) {
     $insertSQL = "SELECT * FROM Cotizacion WHERE id=".$key;
-   	$result = mysql_query($insertSQL);
-		$row = mysql_fetch_array($result);
+   	$result = mysqli_query($conn, $insertSQL);
+		$row = mysqli_fetch_array($result);
 	      echo '<tr><td valign="top"><center><a  style="text-decoration: none;" href="../pedidos/verPedido.php?CotizacionNo='.$row['id'].'">';
 				$year = substr($row['facturaFecha'],0,4);
 				$month = substr($row['facturaFecha'],5,2);									 
@@ -1788,15 +1788,15 @@ foreach ($facturas as $key => $val) {
 						 
 		
 	 $insertSQL='SELECT sum( preciolista * cantidad ) FROM `CotizacionHerramientas` WHERE `factura` = 0 AND `remision` != 0 AND moneda="usd" AND cliente='.$id;
-   $resultRemision = mysql_query($insertSQL);
-	 $rowRemision = mysql_fetch_array($resultRemision);
+   $resultRemision = mysqli_query($conn, $insertSQL);
+	 $rowRemision = mysqli_fetch_array($resultRemision);
    $today = getdate(); 
    $resultCambio = mysql_query("SELECT * FROM tipoDeCambio WHERE fecha='$today[year]-$today[mon]-$today[mday]'");
-   $rowCambio = mysql_fetch_array($resultCambio);
+   $rowCambio = mysqli_fetch_array($resultCambio);
 	 $valueRemision=round($rowRemision['sum( preciolista * cantidad )'],2)*$rowCambio['cambio'];
 	 $insertSQL='SELECT sum( preciolista * cantidad ) FROM `CotizacionHerramientas` WHERE `factura` = 0 AND `remision` != 0 AND moneda="mxn" AND cliente='.$id;
-   $resultRemision = mysql_query($insertSQL);
-	 $rowRemision = mysql_fetch_array($resultRemision);
+   $resultRemision = mysqli_query($conn, $insertSQL);
+	 $rowRemision = mysqli_fetch_array($resultRemision);
 	 $valueRemision+=round($rowRemision['sum( preciolista * cantidad )'],2);
 	 $valueRemision=round($valueRemision,2);
 	 
@@ -1808,8 +1808,8 @@ foreach ($facturas as $key => $val) {
 	     echo '<tr><td><b>#</b></td><td><b>Marca</b></td><td><b>Modelo</b></td><td><b>Descripci�n</b></td><td><b>Cant.</b></td><td><b>Precio U.</b></td><td><b>Mon.</b></td><td><b>Remision</b></td><td><b>Entr.</b></td></tr>';
 	  	 $i=1;
     	 $insertSQL = "SELECT * FROM CotizacionHerramientas WHERE `factura` = 0 AND `remision` != 0 AND cliente=".$id." order by modelo";
-		   $result1 = mysql_query($insertSQL);
-	     while ($row1 = mysql_fetch_array($result1)) {
+		   $result1 = mysqli_query($conn, $insertSQL);
+	     while ($row1 = mysqli_fetch_array($result1)) {
 	               echo '<tr><td valign="top"><a  style="text-decoration: none;" href="../remisiones/agregarHerrRemision.php?deMenu=1&&remision='.$row1["remision"].'">'.$i.'</a></td><td valign="top">'.$row1["marca"].'</td><td valign="top">'.$row1["modelo"].'</td><td valign="top">'.$row1["descripcion"].'</td><td valign="top" align="right">'.$row1["cantidad"].'</td><td valign="top" align="right">'.$row1["precioLista"].'</td><td>'.$row1["moneda"].'</td><td align="center">'.$row1["remision"].'</td><td align="center">'.$row1["Entregado"].'</td>';
 								 $i++;
 	     }	 
@@ -1818,14 +1818,14 @@ foreach ($facturas as $key => $val) {
    } else {
 	    echo '<a href="ensenarContacto.php?id='.$id.'">Remisiones: <b>'.$valueRemision.'</b></a>';
 	    $insertSQL = "SELECT * FROM Cotizacion WHERE Comentario='' and remision!=0 and remisionFactura=0 AND cliente=".$id." ORDER BY fecha DESC";
-      $result = mysql_query($insertSQL);
+      $result = mysqli_query($conn, $insertSQL);
 	    echo '<table  border="1" cellpadding="1" cellspacing="1" summary="" frame="border" >';
 	    echo '<tr><td><center>#</center></td><td>Remision</td><td>Cliente</td><td>Contacto</td><td>Fecha</td><td>Cant.</td><td>Suma</td><td>Mon.</td></tr>';
 	    $i=1;$total=0;
-	    while ($row = mysql_fetch_array($result)) {
+	    while ($row = mysqli_fetch_array($result)) {
 	 					$insertSQL = "SELECT * FROM Contactos WHERE id=".$row['cliente'];
-   					$res = mysql_query($insertSQL);
-   					$r = mysql_fetch_array($res);
+   					$res = mysqli_query($conn, $insertSQL);
+   					$r = mysqli_fetch_array($res);
 	    			echo '<tr><td valign="top"><center><a  style="text-decoration: none;" href="../remisiones/agregarHerrRemision.php?deMenu=1&remision='.$row['remision'].'">'.$i.'</a></center></td><td valign="top">'.$row["remision"].'</td><td valign="top">'.$r["nombreEmpresa"].'</td><td valign="top">'.$row["contacto"].'</td><td valign="top" align="right">'.$row["remisionFecha"].'</td><td valign="top" align="right">'.$row["partidaCantidad"].'</td><td valign="top" align="right">'.$row["precioTotal"].'</td><td>'.$row["moneda"].'</td></tr>';
 						$total+=round($row["precioTotal"]);
 						$i++;
@@ -1840,15 +1840,15 @@ foreach ($facturas as $key => $val) {
 	 }
 	           include "../incl/connect.incl";
 	 				   $insertSQL = "SELECT * FROM Cotizacion WHERE remision=0 and comentario='' and cliente=".$id." ORDER BY fecha DESC limit ".$i_cotizacion.",30";
-   				   $result = mysql_query($insertSQL);
+   				   $result = mysqli_query($conn, $insertSQL);
 					 	 echo '<br><br><br><b>Cotizaciones</b>';
 					 	 echo '<table border="1" cellpadding="1" cellspacing="1" summary="" frame="border" >';
 						 echo '<tr><td>Ref.</td><td>Cliente</td><td>Contacto</td><td>Fecha</td></tr>';
 	 					 $i=1;
-	 					 while ($row = mysql_fetch_array($result)) {
+	 					 while ($row = mysqli_fetch_array($result)) {
 	 					   $insertSQL = "SELECT * FROM Contactos WHERE id=".$row['cliente'];
-   					   $res = mysql_query($insertSQL);
-   					   $r = mysql_fetch_array($res);
+   					   $res = mysqli_query($conn, $insertSQL);
+   					   $r = mysqli_fetch_array($res);
 	    			   echo '<tr><td valign="top"><a  style="text-decoration: none;" href="../cotizaciones/agregarCotizacion.php?deMenu=1&numero='.$row["ref"].'&fecha='.$row["fecha"].'&contacto='.$row['contacto'].'&CotizacionNo='.$row['id'].'&cliente='.$row['cliente'].'&NOPartidas='.$NOPartidas.'&id='.$row["id"].'">'.$row["ref"].'</a></td><td valign="top">'.substr($r["nombreEmpresa"],0,30).'</td><td valign="top">'.$row["contacto"].'</td><td valign="top" align="right">'.$row["fecha"].'</td></tr>';
 						   $total+=round($row["cantidad"]*$row["precioLista"]);
 						   $i_cotizacion++;
@@ -1870,14 +1870,14 @@ echo '<a href="ensenarContacto.php?id='.$id.'&i_cotizacion='.$i_cotizacion.'">'.
       	 echo "<br><br>";
       	 echo "<b>Entregado y Pagado:</b>";
       	 $insertSQL = "SELECT * FROM Cotizacion WHERE fechaEntregado!='0000-00-00' and cliente=".$id." and `Pagado` > ((1+`IVA`) * `precioTotal`)-0.1 AND factura!='0'  ORDER BY factura DESC";
-         $result = mysql_query($insertSQL);
+         $result = mysqli_query($conn, $insertSQL);
       	 echo '<table  border="1" cellpadding="1" cellspacing="1" summary="" frame="border" >';
       	 echo '<tr><td>#</td><td>Ref.</td><td>Contacto</td><td>Fecha</td><td>Cant.</td><td>Suma</td><td>Pago</td></tr>';
       	 $i=1;
-      	 while ($row = mysql_fetch_array($result)) {
+      	 while ($row = mysqli_fetch_array($result)) {
       	     $insertSQL = "SELECT * FROM Contactos WHERE id=".$row['cliente'];
-             $res = mysql_query($insertSQL);
-             $r = mysql_fetch_array($res);
+             $res = mysqli_query($conn, $insertSQL);
+             $r = mysqli_fetch_array($res);
       	     echo '<tr><td valign="top"><a  style="text-decoration: none;" href="../pedidos/verPedido.php?CotizacionNo='.$row['id'].'">'.$i.'</a></td><td valign="top">';
       			 if ($row["factura"]!='0') {
       			    echo $row["factura"];
@@ -1901,10 +1901,10 @@ echo '<a href="ensenarContacto.php?id='.$id.'&i_cotizacion='.$i_cotizacion.'">'.
       	 echo '<table summary="" border="1" cellpadding="2" cellspacing="0">';
          echo '<tr><td>#</td><td>Fecha</td><td>Factura</td><td>Cuenta</td><td>Cantidad</td></tr>';
       	 $i=1; $amount=0; $date='';
-         while ($row = mysql_fetch_array($result)) {
+         while ($row = mysqli_fetch_array($result)) {
       	   if ($date!=$row['date'] and $date!='') {
       	 	   	$result_payments = mysql_query("SELECT * FROM `payments` where client=".$id." and date=".$date." ORDER BY no_pago_diario ");
-         		 	while ($row = mysql_fetch_array($result)) {
+         		 	while ($row = mysqli_fetch_array($result)) {
 					 
                  echo '<tr><td>'.$i.'</td><td>'.$date.'</td><td>';
           		   if ($row['tipo']!='factura')
@@ -1922,8 +1922,8 @@ echo '<a href="ensenarContacto.php?id='.$id.'&i_cotizacion='.$i_cotizacion.'">'.
       		 $factura=$factura.$row['factura'].', ';
       		 
            $insertSQL="SELECT * FROM `accounts` WHERE id=".$row['account'];
-      	   $result1 = mysql_query($insertSQL);
-      	   $row1 = mysql_fetch_array($result1);
+      	   $result1 = mysqli_query($conn, $insertSQL);
+      	   $row1 = mysqli_fetch_array($result1);
       	   $account=$row1['nombre'];
       
          }
@@ -1945,7 +1945,7 @@ echo '<a href="ensenarContacto.php?id='.$id.'&i_cotizacion='.$i_cotizacion.'">'.
       	 echo '<center><table summary="" border="1" cellpadding="2" cellspacing="0">';
          echo '<tr><td>#</td><td>Fecha</td><td>Factura</td><td>Cuenta</td><td>Cantidad</td></tr>';
       	 $i=1; $amount=0;$date=''; $test_string='';
-         while ($row = mysql_fetch_array($result)) {
+         while ($row = mysqli_fetch_array($result)) {
   				   if (strstr($test_string,'+*'.$row['date'].'**'.$row['no_pago_diario'].'**'.$row['account'].'*+')=='') {
   
   
@@ -1953,8 +1953,8 @@ echo '<a href="ensenarContacto.php?id='.$id.'&i_cotizacion='.$i_cotizacion.'">'.
                  echo '<tr><td>'.$i.'</td><td>'.$row['date'].'</td><td>';
 								 
 								 $insertSQL="SELECT * FROM `payments` where client=".$id." and date='".$row['date']."' and no_pago_diario=".$row['no_pago_diario']." and account=".$row['account']." ORDER BY factura ";
-								 $result_pago = mysql_query($insertSQL);
-								 while ($row_pago = mysql_fetch_array($result_pago)) {
+								 $result_pago = mysqli_query($conn, $insertSQL);
+								 while ($row_pago = mysqli_fetch_array($result_pago)) {
 								 
 								    $factura.=$row_pago['factura'].', ';
 								    $amount+=$row_pago['amount'];
@@ -1964,8 +1964,8 @@ echo '<a href="ensenarContacto.php?id='.$id.'&i_cotizacion='.$i_cotizacion.'">'.
           		   echo $factura.'</td><td>';
   
                  $insertSQL="SELECT * FROM `accounts` WHERE id=".$row['account'];
-            	   $result1 = mysql_query($insertSQL);
-            	   $row1 = mysql_fetch_array($result1);
+            	   $result1 = mysqli_query($conn, $insertSQL);
+            	   $row1 = mysqli_fetch_array($result1);
             	   $account=$row1['nombre'];
   
           		   echo $account;
@@ -2002,7 +2002,7 @@ echo '<a href="ensenarContacto.php?id='.$id.'&i_cotizacion='.$i_cotizacion.'">'.
 	 
 	 
 	 
-	  	 mysql_close($conn);
+	  	 mysqli_close($conn);
 }
 
 	 
@@ -2014,3 +2014,4 @@ echo '<a href="ensenarContacto.php?id='.$id.'&i_cotizacion='.$i_cotizacion.'">'.
 
 
 </body>
+

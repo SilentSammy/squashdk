@@ -24,7 +24,7 @@ include "incl/connect.incl";
 $result = mysql_query("select * from Contactos where id = $id");
 // Kør så igennem for hver række
 
-while ($row = mysql_fetch_array($result)) {
+while ($row = mysqli_fetch_array($result)) {
 echo '<table border="1" cellpadding="3" cellspacing="0" summary="" align="center" bgcolor="#ffffff">';
 echo '<tr><td>Nombre</td><td><input type="text" name="nombre" size="20" value="'.$row["nombre"].'"></td></tr>';
 $fecha_nac=substr($row["fecha_nac"],8,2).substr($row["fecha_nac"],5,2).substr($row["fecha_nac"],2,2);
@@ -46,8 +46,8 @@ echo '<tr><td>ContactoHDK</td><td><select name="responsable">';
 
 include "../incl/connect.incl";
    $result = mysql_query("SELECT * FROM Empleados ORDER BY nombre");
-   mysql_close($conn);
-	 while ($row1 = mysql_fetch_array($result)) {
+   mysqli_close($conn);
+	 while ($row1 = mysqli_fetch_array($result)) {
 	    if ($row1['nombre']==$row['responsable'])
 			   echo '<option value="'.$row1['nombre'].'" selected="selected">'.$row1['nombre'].'</option>';
 			else
@@ -75,3 +75,4 @@ echo '</form>';
 
 
 </body>
+

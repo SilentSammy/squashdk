@@ -1,5 +1,8 @@
 <?php
-$conn = mysql_connect("127.0.0.1", "root", "");
-mysql_select_db("squash_dk");
+$conn = mysqli_connect("127.0.0.1", "root", "", "squash_dk");
+
+if (!$conn) {
+    die("Database connection failed: " . mysqli_connect_error());
+}
 
 ?>

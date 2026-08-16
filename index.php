@@ -43,88 +43,88 @@ if(isset($edit)) {
    include "incl/connect.incl";
    if ($nombre!='') {
       $insertSQL = "update Contactos set nombre='$nombre' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
    if ($fecha_nac!='') {
       $insertSQL = "update Contactos set fecha_nac='$fecha_nac' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
    if ($ID_no!='') {
       $insertSQL = "update Contactos set ID_no='$ID_no' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
    if ($personaContacto!='') {
       $insertSQL = "update Contactos set personaContacto='$personaContacto' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
    if ($tlfContacto!='') {
       $insertSQL = "update Contactos set tlfContacto='$tlfContacto' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
    if ($calle!='') {
       $insertSQL = "update Contactos set calle='$calle' where id=$id";
-			mysql_query($insertSQL);
+			mysqli_query($conn, $insertSQL);
    }
    if ($noExt!='') {
       $insertSQL = "update Contactos set noExt='$noExt' where id=$id";
-			mysql_query($insertSQL);
+			mysqli_query($conn, $insertSQL);
    }
    if ($noInt!='') {
       $insertSQL = "update Contactos set noInt='$noInt' where id=$id";
-			mysql_query($insertSQL);
+			mysqli_query($conn, $insertSQL);
    }
    if ($colonia!='') {
       $insertSQL = "update Contactos set colonia='$colonia' where id=$id";
-			mysql_query($insertSQL);
+			mysqli_query($conn, $insertSQL);
    }
    if ($ciudad!='') {
       $insertSQL = "update Contactos set ciudad='$ciudad' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
    if ($estado!='') {
       $insertSQL = "update Contactos set estado='$estado' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
    if ($cp!='') {
       $insertSQL = "update Contactos set cp='$cp' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
    if ($pais!='') {
       $insertSQL = "update Contactos set pais='$pais' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
    if ($whatsapp!='') {
       $insertSQL = "update Contactos set whatsapp='$whatsapp' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
    if ($tlf!='') {
       $insertSQL = "update Contactos set tlf='$tlf' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
    if ($movil!='') {
       $insertSQL = "update Contactos set movil='$movil' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
    if ($correoElectronico!='') {
       $insertSQL = "update Contactos set correoElectronico='$correoElectronico' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
    if ($responsable!='') {
       $insertSQL = "update Contactos set responsable='$responsable' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
    if ($tipo!='') {
       $insertSQL = "update Contactos set tipo='$tipo' where id=$id";
-      mysql_query($insertSQL);
+      mysqli_query($conn, $insertSQL);
    }
-   mysql_close($conn);
+   mysqli_close($conn);
 }
 if (isset($delete))
 {
    include "incl/connect.incl";
    $insertSQL = "delete from Contactos where id=$id";
-   mysql_query($insertSQL);
-   mysql_close($conn);
+   mysqli_query($conn, $insertSQL);
+   mysqli_close($conn);
 }  
 if (isset($agregar)) {
    include "incl/connect.incl";
@@ -132,8 +132,8 @@ if (isset($agregar)) {
 	 		$cp=0;
 	 $codigo;
    $insertSQL = "INSERT INTO `contactos` ( `responsable` , `nombre` , `fecha_nac` , `ID_no`, `personaContacto` ,`tlfContacto` , `calle` , `noExt` , `noInt` , `colonia` , `ciudad` , `estado` , `cp` , `pais` , `whatsapp` ,`tlf` , `movil` , `correoElectronico` ) VALUES ( '$responsable', '$nombre', '$fecha_nac', '$ID_no', '$personaContacto', '$tlfContacto', '$calle', '$noExt', '$noInt', '$colonia', '$ciudad', '$estado', '$cp', '$pais', '$whatsapp', '$tlf', '$movil', '$correoElectronico')";
-   mysql_query($insertSQL);
-   mysql_close($conn);
+   mysqli_query($conn, $insertSQL);
+   mysqli_close($conn);
 }
 
 
@@ -169,8 +169,8 @@ if (isset($agregar)) {
 
    include "incl/connect.incl";
 	 $insertSQL="SELECT nombre FROM Contactos ORDER BY nombre";
-   $result = mysql_query($insertSQL);
-	 while ($row = mysql_fetch_array($result)) {
+   $result = mysqli_query($conn, $insertSQL);
+	 while ($row = mysqli_fetch_array($result)) {
 
 	    $clients_string.="'".$row['nombreEmpresa']."',";
 	 
@@ -215,18 +215,18 @@ if (isset($agregar)) {
 	 $now_time = strtotime($now);
 		
 		$insertSQL = "select * from actividades where tipo = 'Rent' and fecha > '".$now."' order by fecha limit 20";
-    $result = mysql_query($insertSQL);
+    $result = mysqli_query($conn, $insertSQL);
 	 
 		$insertSQL = "select id from actividades where fecha > '".$now."' order by fecha limit 1";
-    $result_nextup = mysql_query($insertSQL);
-		$row_nextup = mysql_fetch_array($result_nextup);
+    $result_nextup = mysqli_query($conn, $insertSQL);
+		$row_nextup = mysqli_fetch_array($result_nextup);
 
 	 echo '<table  border="1" cellpadding="3" cellspacing="0" summary="" frame="border" >';
 	 echo '<thead><th colspan="4"><b><center>Proximas Actividades</center></b></th></thead>';
 	 echo '<thead><th>Fecha</th><th>Jugador</th><th>Duracion</th><th>Cancha</th></thead>';
 	 
    
-	  while ($row = mysql_fetch_array($result)) {
+	  while ($row = mysqli_fetch_array($result)) {
 
    echo '<tr><td>';
 	   if ($row["tipo"]=="Pago")
@@ -241,8 +241,8 @@ if (isset($agregar)) {
 	 echo '</td>';
    echo '<td>';
 	 		$insertSQL = "select * from contactos where id=".$row['contacto'];
-			$result_contacto = mysql_query($insertSQL);
-			$row_contacto = mysql_fetch_array($result_contacto);
+			$result_contacto = mysqli_query($conn, $insertSQL);
+			$row_contacto = mysqli_fetch_array($result_contacto);
 			echo $row_contacto['nombre'];
 	 echo '</td>';
    echo '<td align="center">';
@@ -279,7 +279,7 @@ if (isset($agregar)) {
 //
    include "incl/connect.incl";
 	 $insertSQL="SELECT * FROM Contactos ORDER BY nombre";
-   $result = mysql_query($insertSQL);
+   $result = mysqli_query($conn, $insertSQL);
 	 
 	 
 	 
@@ -294,7 +294,7 @@ if (isset($agregar)) {
   	   $now_time = strtotime($now);
 
 			 
-   		 while ($row = mysql_fetch_array($result)) {	 		
+   		 while ($row = mysqli_fetch_array($result)) {	 		
 			 			 $test=strtolower($row['nombre'].$row['personaContacto'].$row['calle'].$row['ciudad'].$row['estado'].$row['cp'].$row['pais'].$row['whatsApp'].$row['tlf'].$row['movil'].$row['correoElectronico'].$row['responsable']);
 						 $find=strtolower($palabraBusca);
 						 $findLen = strlen($find);
@@ -314,20 +314,20 @@ if (isset($agregar)) {
 				  						echo "</td><td>".$row['fecha_nac']."</td><td valign='top' >".$row['whatsapp']."</td><td valign='top' >".$row['correoElectronico']."</td><td valign='top' align=right>";
 
 											$insertSQL='SELECT SUM(valor) FROM `actividades` WHERE contacto = '.$row['id'].' AND tipo = "Pago"';
-   										$result_pago = mysql_query($insertSQL);
-											$row_pago = mysql_fetch_array($result_pago);
+   										$result_pago = mysqli_query($conn, $insertSQL);
+											$row_pago = mysqli_fetch_array($result_pago);
 
 											$insertSQL='SELECT SUM(valor) FROM `actividades` WHERE contacto = '.$row['id'].' AND tipo = "Rent"';
-   										$result_rent = mysql_query($insertSQL);
-											$row_rent = mysql_fetch_array($result_rent);
+   										$result_rent = mysqli_query($conn, $insertSQL);
+											$row_rent = mysqli_fetch_array($result_rent);
 											
 											echo $saldo = number_format($row_pago["SUM(valor)"]-$row_rent["SUM(valor)"],2);
 											
 											echo "</td>";
 
                   		 $insertSQL = "select * from actividades where contacto = ".$row['id']." and fecha > '".$now."' order by fecha limit 1";
-                       $result_nextup = mysql_query($insertSQL);
-                  		 $row_nextup = mysql_fetch_array($result_nextup);
+                       $result_nextup = mysqli_query($conn, $insertSQL);
+                  		 $row_nextup = mysqli_fetch_array($result_nextup);
 											
 											echo "<td valign='top' align=right>".substr($row_nextup["fecha"],0,16).'-'.substr($row_nextup["final"],11,5)."</td>";
 
@@ -353,7 +353,7 @@ if (isset($agregar)) {
 	 
 	 		 echo '<center>El resultado de la búsqueda: '.$palabraBusca.'</center>';
 			 $b=0;
-   		 while ($row = mysql_fetch_array($result)) {	 		
+   		 while ($row = mysqli_fetch_array($result)) {	 		
 			 			 $test=strtolower($row['nombreEmpresa'].$row['personaContacto'].$row['calle'].$row['ciudad'].$row['estado'].$row['cp'].$row['pais'].$row['tlf1'].$row['tlf2'].$row['fax'].$row['movil'].$row['correoElectronico'].$row['paginaWeb'].$row['RFC'].$row['tipo'].$row['codigo'].$row['responsable']);
 						 $find=strtolower($palabraBusca);
 						 $findLen = strlen($find);
@@ -382,7 +382,7 @@ if (isset($agregar)) {
 					
 
 	 } else {*/
-/*   	 while ($row = mysql_fetch_array($result)) {
+/*   	 while ($row = mysqli_fetch_array($result)) {
 	 				 if ($row['category']==$cat || $cat=='') {
          	 		echo "<tr>";
          			echo "<td valign='top'><a href='ensenarContacto.php?id=".$row['id']."' style='text-decoration: none;'>";
@@ -393,7 +393,7 @@ if (isset($agregar)) {
 					 }
      }
 */	 }
-   mysql_close($conn);
+   mysqli_close($conn);
 ?>
 
 
@@ -404,4 +404,5 @@ if (isset($agregar)) {
 
 </body>
 </html>
+
 
